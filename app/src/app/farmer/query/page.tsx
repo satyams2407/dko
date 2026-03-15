@@ -102,6 +102,9 @@ export default function FarmerQueryPage() {
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
+              <a className="inline-flex h-12 items-center justify-center rounded-full border border-[#E5E7EB] px-5 text-sm font-semibold text-[#0A0A0A]" href="/">
+                Home
+              </a>
               <a className="inline-flex h-12 items-center justify-center rounded-full bg-[#0A0A0A] px-5 text-sm font-semibold text-white" href="/farmer/history">
                 <History className="mr-2 h-4 w-4" /> Open History
               </a>
