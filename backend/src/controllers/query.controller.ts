@@ -3,7 +3,12 @@ import { escalationsRepository } from "../repositories/escalations.repository.js
 import { feedbackRepository } from "../repositories/feedback.repository.js";
 import { queriesRepository } from "../repositories/queries.repository.js";
 import { responsesRepository } from "../repositories/responses.repository.js";
-import { processImageQuery, processTextQuery, processVoiceQuery } from "../services/ai/text-query.service.js";
+import {
+  processImageQuery,
+  processTextQuery,
+  processVoiceQuery,
+  translateAdvisory
+} from "../services/ai/text-query.service.js";
 import { escalationService } from "../services/escalation.service.js";
 import { sendError, sendSuccess } from "../utils/http.js";
 
@@ -259,4 +264,54 @@ export async function submitQueryFeedback(request: Request, response: Response) 
     : null;
 
   return sendSuccess(response, { feedback, escalation }, 201);
+}
+
+export async function translateQueryResponse(request: Request, response: Response) {
+  if (!request.authUser) {
+    return sendError(response, 401, "UNAUTHORIZED", "Authentication required.");
+  }
+
+  const queryId = request.params.id;
+  const { targetLanguage } = request.body as {
+    targetLanguage?: "ml";
+  };
+
+  if (typeof queryId !== "string") {
+    return sendError(response, 400, "VALIDATION_ERROR", "Query ID is required.");
+  }
+
+  if (targetLanguage !== "ml") {
+    return sendError(response, 400, "VALIDATION_ERROR", "Only Malayalam translation is currently supported.");
+  }
+
+  const query = await queriesRepository.findById(queryId);
+  if (!query) {
+    return sendError(response, 404, "NOT_FOUND", "Query not found.");
+  }
+
+  if (!isAllowedToView(request.authUser.uid, request.authUser.role, query.userId)) {
+    return sendError(response, 403, "FORBIDDEN", "You do not have access to this query.");
+  }
+
+  const responses = await responsesRepository.listByQueryId(queryId);
+  const latestResponse = responses[responses.length - 1];
+
+  if (!latestResponse?.content?.trim()) {
+    return sendError(response, 400, "VALIDATION_ERROR", "No response is available to translate.");
+  }
+
+  const translated = await translateAdvisory({
+    content: latestResponse.content,
+    targetLanguage
+  });
+
+  return sendSuccess(response, {
+    responseId: latestResponse.responseId,
+    sourceLanguage: "en",
+    targetLanguage,
+    originalContent: latestResponse.content,
+    translatedContent: translated.content,
+    translatedBy: translated.modelUsed,
+    source: translated.source
+  });
 }

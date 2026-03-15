@@ -51,6 +51,12 @@ export interface ImageQueryResult extends TextQueryResult {
   visibleSigns: string[];
 }
 
+export interface TranslationResult {
+  content: string;
+  modelUsed: string;
+  source: "gemini" | "fallback";
+}
+
 let resolvedGeminiModelPromise: Promise<string> | null = null;
 
 function normalize(text: string) {
@@ -292,6 +298,21 @@ async function generateWithGemini(query: string) {
   };
 }
 
+async function generateTranslation(input: { content: string; targetLanguage: "ml" }) {
+  const languageName = input.targetLanguage === "ml" ? "Malayalam" : "Malayalam";
+  const prompt = [
+    "You are translating agricultural advice for local farmers in India.",
+    `Translate the following advisory from English to ${languageName}.`,
+    "Keep the meaning accurate and practical.",
+    "Preserve numbering, step order, and urgency.",
+    "Use natural, farmer-friendly wording.",
+    "Return only the translated advisory text.",
+    `Advisory: ${input.content}`
+  ].join(" ");
+
+  return generateText([{ text: prompt }]);
+}
+
 async function generateVoiceAnalysis(audioUrl: string, audioMimeType?: string, description?: string) {
   const audioPart = await fetchMediaPart(audioUrl, audioMimeType);
   const prompt = [
@@ -467,6 +488,35 @@ export async function processImageQuery(input: {
       visibleSigns: [],
       content: fallback,
       confidence: 54,
+      modelUsed: "fallback",
+      source: "fallback"
+    };
+  }
+}
+
+export async function translateAdvisory(input: {
+  content: string;
+  targetLanguage: "ml";
+}): Promise<TranslationResult> {
+  if (!env.GEMINI_API_KEY) {
+    return {
+      content: input.content,
+      modelUsed: "fallback",
+      source: "fallback"
+    };
+  }
+
+  try {
+    const translated = await generateTranslation(input);
+    return {
+      content: translated.content,
+      modelUsed: translated.modelUsed,
+      source: "gemini"
+    };
+  } catch (error) {
+    console.error("Advisory translation failed", error);
+    return {
+      content: input.content,
       modelUsed: "fallback",
       source: "fallback"
     };

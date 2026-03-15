@@ -27,6 +27,8 @@ const farmerPhoneImage =
   "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=800&q=80&auto=format&fit=crop";
 const greenHillsImage =
   "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=1400&q=80&auto=format&fit=crop";
+const heroRenewablesVideo =
+  "https://cdn.pixabay.com/video/2024/09/09/230545_large.mp4";
 
 const navLinks = [
   { label: "Home", href: "#home" },
@@ -76,39 +78,19 @@ const solutions = [
 
 export default function LandingPage() {
   return (
-    <>
-      <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;800&family=Playfair+Display:wght@600;700;800&display=swap');
-
-        :root {
-          --font-display: 'Playfair Display', serif;
-          --font-body: 'DM Sans', sans-serif;
-        }
-
-        html {
-          scroll-behavior: smooth;
-        }
-
-        body {
-          font-family: var(--font-body);
-          background: #ffffff;
-          color: #0a0a0a;
-        }
-      `}</style>
-      <main className="relative bg-white text-[#0A0A0A]">
-        <NavigationBar />
-        <HeroSection />
-        <HeroPhotoPanel />
-        <StatsBar />
-        <EditorialStatementSection />
-        <ProductCarouselSection />
-        <DarkBannerSection />
-        <FeaturesSection />
-        <GameChangerSection />
-        <EmailCaptureBanner />
-        <FooterSection />
-      </main>
-    </>
+    <main className="relative bg-white text-[#0A0A0A]">
+      <NavigationBar />
+      <HeroSection />
+      <HeroPhotoPanel />
+      <StatsBar />
+      <EditorialStatementSection />
+      <ProductCarouselSection />
+      <DarkBannerSection />
+      <FeaturesSection />
+      <GameChangerSection />
+      <EmailCaptureBanner />
+      <FooterSection />
+    </main>
   );
 }
 
@@ -162,15 +144,31 @@ function HeroSection() {
   const heroLines = ["Bring Fresh Growth", "To Agriculture."];
 
   return (
-    <section className="relative overflow-hidden bg-white px-4 py-20 md:px-8 md:py-28" id="home">
-      <DecorativePlus className="left-[8%] top-12 hidden md:block" />
-      <DecorativePlus className="right-[12%] top-24 hidden md:block" />
-      <DecorativePlus className="bottom-24 left-[16%] hidden md:block" />
-      <DecorativePlus className="bottom-16 right-[18%] hidden md:block" />
+    <section className="relative overflow-hidden px-4 py-20 md:px-8 md:py-28" id="home">
+      <div className="absolute inset-0 overflow-hidden bg-[#0B180E]">
+        <video
+          aria-hidden="true"
+          autoPlay
+          className="absolute inset-0 h-full w-full object-cover"
+          loop
+          muted
+          playsInline
+          poster={farmFieldImage}
+        >
+          <source src={heroRenewablesVideo} type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,9,0.56)_0%,rgba(7,16,9,0.72)_35%,rgba(7,16,9,0.88)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(140,255,165,0.1),transparent_30%),linear-gradient(90deg,rgba(7,16,9,0.72)_0%,rgba(7,16,9,0.3)_42%,rgba(7,16,9,0.72)_100%)]" />
+      </div>
 
-      <div className="mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center text-center">
+      <DecorativePlus className="left-[8%] top-12 hidden text-white/35 md:block" />
+      <DecorativePlus className="right-[12%] top-24 hidden text-white/35 md:block" />
+      <DecorativePlus className="bottom-24 left-[16%] hidden text-white/35 md:block" />
+      <DecorativePlus className="bottom-16 right-[18%] hidden text-white/35 md:block" />
+
+      <div className="relative z-10 mx-auto flex min-h-[520px] max-w-6xl flex-col items-center justify-center text-center">
         <motion.div
-          className="rounded-full border border-[#C8E6C9] bg-[#F1F8E9] px-4 py-2 text-[12px] font-medium text-[#2E7D32]"
+          className="rounded-full border border-white/24 bg-white/12 px-4 py-2 text-[12px] font-medium text-white backdrop-blur [text-shadow:0_1px_8px_rgba(0,0,0,0.4)]"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -182,7 +180,7 @@ function HeroSection() {
           {heroLines.map((line, index) => (
             <motion.h1
               key={line}
-              className="mx-auto max-w-[700px] text-[48px] font-bold leading-[1.05] tracking-[-1.5px] text-[#0A0A0A] md:text-[72px] md:tracking-[-2px]"
+              className="mx-auto max-w-[780px] text-[48px] font-bold leading-[1.05] tracking-[-1.5px] text-white [text-shadow:0_8px_30px_rgba(0,0,0,0.45)] md:text-[72px] md:tracking-[-2px]"
               style={{ fontFamily: "var(--font-display)" }}
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -194,19 +192,19 @@ function HeroSection() {
         </div>
 
         <motion.p
-          className="mx-auto mt-4 max-w-[480px] text-base leading-7 text-[#6B7280]"
+          className="mx-auto mt-4 max-w-[560px] text-base leading-7 text-white [text-shadow:0_4px_18px_rgba(0,0,0,0.38)]"
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.35 }}
         >
-          Experience the ultimate advisory journey with expert AI tips, premium care,
-          and professional insights.
+          Experience AI guidance against a live backdrop of modern agriculture,
+          where clean energy and productive fields move together.
         </motion.p>
 
         <motion.a
-          className="mt-8 inline-flex h-12 items-center rounded-full bg-[#0A0A0A] px-6 text-base font-medium text-white shadow-[0_12px_30px_rgba(10,10,10,0.12)]"
+          className="mt-8 inline-flex h-12 items-center rounded-full bg-white px-6 text-base font-medium text-[#0A0A0A] shadow-[0_18px_40px_rgba(0,0,0,0.24)]"
           href="/farmer/query/text"
-          whileHover={{ scale: 1.03, boxShadow: "0 18px 40px rgba(10,10,10,0.18)" }}
+          whileHover={{ scale: 1.03, boxShadow: "0 22px 46px rgba(0,0,0,0.3)" }}
           whileTap={{ scale: 0.98 }}
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}

@@ -55,6 +55,9 @@ export default function FarmerResponsePage() {
   const [error, setError] = useState<string | null>(null);
   const [feedbackState, setFeedbackState] = useState<"idle" | "helpful" | "not_helpful">("idle");
   const [feedbackLoading, setFeedbackLoading] = useState(false);
+  const [displayLanguage, setDisplayLanguage] = useState<"en" | "ml">("en");
+  const [malayalamResponse, setMalayalamResponse] = useState<string | null>(null);
+  const [translationLoading, setTranslationLoading] = useState(false);
 
   useEffect(() => {
     if (!loading && !appUser) {
@@ -96,6 +99,12 @@ export default function FarmerResponsePage() {
   }, [appUser, params.id]);
 
   const latestResponse = responses[responses.length - 1];
+
+  useEffect(() => {
+    setDisplayLanguage("en");
+    setMalayalamResponse(null);
+  }, [latestResponse?.responseId]);
+
   const meta = useMemo(() => {
     if (!query) {
       return queryTypeMeta.text;
@@ -104,6 +113,8 @@ export default function FarmerResponsePage() {
     return queryTypeMeta[query.type];
   }, [query]);
   const QueryIcon = meta.icon;
+  const visibleResponseContent =
+    displayLanguage === "ml" && malayalamResponse ? malayalamResponse : latestResponse?.content ?? "No response yet.";
 
   async function sendFeedback(rating: "helpful" | "not_helpful") {
     if (!query || !latestResponse) {
@@ -134,6 +145,45 @@ export default function FarmerResponsePage() {
       setError("Failed to submit feedback.");
     } finally {
       setFeedbackLoading(false);
+    }
+  }
+
+  async function switchResponseLanguage(nextLanguage: "en" | "ml") {
+    setError(null);
+
+    if (nextLanguage === "en") {
+      setDisplayLanguage("en");
+      return;
+    }
+
+    if (!query || !latestResponse) {
+      return;
+    }
+
+    if (malayalamResponse) {
+      setDisplayLanguage("ml");
+      return;
+    }
+
+    setTranslationLoading(true);
+
+    try {
+      const result = await apiClient.post<{
+        success: true;
+        data: {
+          translatedContent: string;
+        };
+      }>(`/queries/${query.queryId}/translate`, {
+        targetLanguage: "ml"
+      });
+
+      setMalayalamResponse(result.data.data.translatedContent);
+      setDisplayLanguage("ml");
+    } catch (translationError) {
+      console.error(translationError);
+      setError("Failed to translate this response to Malayalam.");
+    } finally {
+      setTranslationLoading(false);
     }
   }
 
@@ -234,7 +284,28 @@ export default function FarmerResponsePage() {
                   Field-ready recommendations.
                 </h2>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="inline-flex rounded-full border border-[#E5E7EB] bg-[#F9FAFB] p-1">
+                  <button
+                    className={`rounded-full px-3 py-2 text-xs font-semibold transition ${displayLanguage === "en" ? "bg-[#0A0A0A] text-white" : "text-[#6B7280]"}`}
+                    onClick={() => {
+                      void switchResponseLanguage("en");
+                    }}
+                    type="button"
+                  >
+                    English
+                  </button>
+                  <button
+                    className={`rounded-full px-3 py-2 text-xs font-semibold transition ${displayLanguage === "ml" ? "bg-[#0A0A0A] text-white" : "text-[#6B7280]"}`}
+                    disabled={translationLoading || !latestResponse}
+                    onClick={() => {
+                      void switchResponseLanguage("ml");
+                    }}
+                    type="button"
+                  >
+                    {translationLoading ? "Translating..." : "Malayalam"}
+                  </button>
+                </div>
                 {latestResponse?.confidence ? (
                   <div className="rounded-full border border-[#C8E6C9] bg-[#F1F8E9] px-4 py-2 text-xs font-semibold text-[#2E7D32]">
                     Confidence {latestResponse.confidence}%
@@ -249,7 +320,12 @@ export default function FarmerResponsePage() {
             {error ? <div className="mt-5 rounded-[20px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
 
             <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-[#FCFCFB] p-5 md:p-6">
-              <p className="whitespace-pre-line text-[15px] leading-8 text-[#0A0A0A]">{latestResponse?.content ?? "No response yet."}</p>
+              <p className="whitespace-pre-line text-[15px] leading-8 text-[#0A0A0A]">{visibleResponseContent}</p>
+              {displayLanguage === "ml" ? (
+                <div className="mt-4 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-xs font-medium text-[#6B7280]">
+                  Malayalam translation view for easier farmer reading.
+                </div>
+              ) : null}
             </div>
 
             {latestResponse?.type !== "officer" ? (
