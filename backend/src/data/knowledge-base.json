@@ -1,0 +1,50 @@
+[
+  {
+    "category": "disease_management",
+    "question": "How do I treat yellow leaves in paddy?",
+    "answer": "1. Check whether the field is overwatered and drain excess standing water. 2. Apply a balanced nitrogen dose only if the crop looks pale overall. 3. Inspect roots and lower stem for rot or pest damage. 4. If yellowing spreads quickly in patches, consult an officer because disease may be involved.",
+    "keywords": ["yellow", "leaves", "paddy", "rice", "yellowing"]
+  },
+  {
+    "category": "pest_control",
+    "question": "How do I control aphids naturally?",
+    "answer": "1. Spray neem oil or neem-based soap early in the morning. 2. Remove heavily infested leaves. 3. Avoid excess nitrogen because it attracts more sap-sucking pests. 4. Repeat the spray after 5 to 7 days if needed.",
+    "keywords": ["aphid", "aphids", "pest", "neem", "natural"]
+  },
+  {
+    "category": "fungal_disease",
+    "question": "What should I do for leaf spot disease?",
+    "answer": "1. Remove badly infected leaves from the field. 2. Avoid overhead irrigation late in the day. 3. Improve spacing for airflow. 4. If the infection is increasing, use a recommended fungicide as per local agricultural guidance.",
+    "keywords": ["leaf", "spot", "fungus", "fungal", "disease"]
+  },
+  {
+    "category": "fertilizer",
+    "question": "When should I apply urea to vegetables?",
+    "answer": "1. Apply urea in small split doses instead of one heavy dose. 2. Water lightly after application. 3. Do not place fertilizer directly on stems or leaves. 4. Stop excess application if leaves are dark green and soft, because that can increase pest and disease risk.",
+    "keywords": ["urea", "fertilizer", "vegetable", "nitrogen"]
+  },
+  {
+    "category": "irrigation",
+    "question": "How often should I irrigate tomato plants?",
+    "answer": "1. Water deeply rather than lightly every day. 2. Irrigate when the top soil starts drying but before plants wilt. 3. Reduce waterlogging because tomato roots are sensitive to excess moisture. 4. Mulch around the plants to retain moisture.",
+    "keywords": ["tomato", "irrigation", "water", "watering"]
+  },
+  {
+    "category": "soil_health",
+    "question": "How can I improve soil fertility?",
+    "answer": "1. Add well-decomposed compost or farmyard manure. 2. Rotate crops where possible. 3. Avoid repeated overuse of a single chemical fertilizer. 4. Test soil when possible to correct nutrient imbalance properly.",
+    "keywords": ["soil", "fertility", "compost", "manure"]
+  },
+  {
+    "category": "weed_management",
+    "question": "How do I reduce weeds in my field?",
+    "answer": "1. Remove weeds early before they flower and spread seed. 2. Use mulching where suitable. 3. Keep irrigation channels clean. 4. If weeds are severe, use a crop-safe herbicide only as per label and local guidance.",
+    "keywords": ["weed", "weeds", "herbicide", "mulch"]
+  },
+  {
+    "category": "wilt",
+    "question": "What should I do when plants are wilting?",
+    "answer": "1. Check soil moisture first. 2. Inspect roots and stem base for rot or insect damage. 3. Remove severely affected plants if disease is suspected. 4. If many plants wilt suddenly, escalate to an agricultural expert quickly.",
+    "keywords": ["wilt", "wilting", "drooping", "roots"]
+  }
+]

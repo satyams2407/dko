@@ -1,0 +1,18 @@
+{
+  "name": "Digital Krishi Officer",
+  "short_name": "DKO",
+  "description": "AI-assisted agricultural advisory for farmers and officers.",
+  "start_url": "/farmer",
+  "display": "standalone",
+  "background_color": "#f4f8ef",
+  "theme_color": "#6e9630",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
