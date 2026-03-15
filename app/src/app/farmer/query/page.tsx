@@ -118,12 +118,19 @@ export default function FarmerQueryPage() {
           </div>
 
           <div className="relative min-h-[320px] overflow-hidden rounded-[32px]">
+            <div className="absolute inset-0 bg-[#0A0A0A]" />
+            <div
+              className="absolute inset-[-8%] scale-[1.08] blur-xl"
+              style={{
+                backgroundImage: `url('${heroImage}')`,
+                backgroundSize: "cover",
+                backgroundPosition: "center"
+              }}
+            />
             <div
               className="absolute inset-0"
               style={{
-                backgroundImage: `linear-gradient(180deg, rgba(10,10,10,0.08) 0%, rgba(10,10,10,0.58) 100%), url('${heroImage}')`,
-                backgroundSize: "cover",
-                backgroundPosition: "center"
+                backgroundImage: `linear-gradient(180deg, rgba(10,10,10,0.16) 0%, rgba(10,10,10,0.68) 100%)`
               }}
             />
             <div className="relative z-10 flex h-full min-h-[320px] flex-col justify-between p-6 text-white md:p-8">

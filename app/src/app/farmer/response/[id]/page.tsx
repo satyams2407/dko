@@ -311,9 +311,6 @@ export default function FarmerResponsePage() {
                     Confidence {latestResponse.confidence}%
                   </div>
                 ) : null}
-                <div className="rounded-full border border-[#E5E7EB] px-4 py-2 text-xs font-semibold text-[#6B7280]">
-                  Source {latestResponse?.type === "officer" ? latestResponse.officerName ?? "officer" : latestResponse?.generatedBy ?? "unknown"}
-                </div>
               </div>
             </div>
 

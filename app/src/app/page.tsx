@@ -157,8 +157,8 @@ function HeroSection() {
         >
           <source src={heroRenewablesVideo} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,9,0.56)_0%,rgba(7,16,9,0.72)_35%,rgba(7,16,9,0.88)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(140,255,165,0.1),transparent_30%),linear-gradient(90deg,rgba(7,16,9,0.72)_0%,rgba(7,16,9,0.3)_42%,rgba(7,16,9,0.72)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,16,9,0.36)_0%,rgba(7,16,9,0.5)_35%,rgba(7,16,9,0.66)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(170,255,188,0.18),transparent_32%),linear-gradient(90deg,rgba(7,16,9,0.44)_0%,rgba(7,16,9,0.12)_42%,rgba(7,16,9,0.44)_100%)]" />
       </div>
 
       <DecorativePlus className="left-[8%] top-12 hidden text-white/35 md:block" />
