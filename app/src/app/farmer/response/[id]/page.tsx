@@ -44,6 +44,85 @@ const queryTypeMeta = {
   }
 } as const;
 
+function buildRecommendationHeading(text: string) {
+  const normalized = text.toLowerCase();
+
+  if (/(leaf|leaves|spot|yellow|observe|look|inspect|sign)/.test(normalized)) {
+    return "Observe Carefully";
+  }
+
+  if (/(soil|moisture|water|watering|irrigation|drain|overwater)/.test(normalized)) {
+    return "Check Soil Moisture";
+  }
+
+  if (/(root|stem|rot)/.test(normalized)) {
+    return "Inspect Roots And Stem";
+  }
+
+  if (/(pest|insect|aphid|egg|underside)/.test(normalized)) {
+    return "Inspect For Pests";
+  }
+
+  if (/(remove|isolate|affected|infected)/.test(normalized)) {
+    return "Remove Damaged Parts";
+  }
+
+  if (/(spray|fungicide|herbicide|neem|chemical|treat)/.test(normalized)) {
+    return "Apply Treatment Carefully";
+  }
+
+  if (/(weather|rain|humidity|temperature)/.test(normalized)) {
+    return "Recall Recent Weather";
+  }
+
+  if (/(photo|image|picture|capture)/.test(normalized)) {
+    return "Capture Better Evidence";
+  }
+
+  if (/(expert|officer|escalate|urgent|review)/.test(normalized)) {
+    return "Seek Expert Support";
+  }
+
+  return "Recommended Action";
+}
+
+function translateRecommendationHeading(heading: string) {
+  switch (heading) {
+    case "Observe Carefully":
+      return "ശ്രദ്ധയോടെ നിരീക്ഷിക്കുക";
+    case "Check Soil Moisture":
+      return "മണ്ണിലെ ഈർപ്പം പരിശോധിക്കുക";
+    case "Inspect Roots And Stem":
+      return "വേരും തണ്ടും പരിശോധിക്കുക";
+    case "Inspect For Pests":
+      return "കീടസാന്നിധ്യം പരിശോധിക്കുക";
+    case "Remove Damaged Parts":
+      return "നശിച്ച ഭാഗങ്ങൾ നീക്കുക";
+    case "Apply Treatment Carefully":
+      return "ചികിത്സ ശ്രദ്ധയോടെ നൽകുക";
+    case "Recall Recent Weather":
+      return "സമീപകാല കാലാവസ്ഥ ഓർക്കുക";
+    case "Capture Better Evidence":
+      return "മെച്ചപ്പെട്ട തെളിവ് ശേഖരിക്കുക";
+    case "Seek Expert Support":
+      return "വിദഗ്ധ സഹായം തേടുക";
+    default:
+      return "ശുപാർശ ചെയ്യുന്ന നടപടി";
+  }
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function removeRepeatedHeadingPrefix(detail: string, heading: string) {
+  return detail
+    .replace(/^\*\*\s*/, "")
+    .replace(/\s*\*\*\s*/, " ")
+    .replace(new RegExp(`^${escapeRegExp(heading)}\\s*[:.-]?\\s*`, "i"), "")
+    .trim();
+}
+
 export default function FarmerResponsePage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -115,7 +194,56 @@ export default function FarmerResponsePage() {
   const QueryIcon = meta.icon;
   const visibleResponseContent =
     displayLanguage === "ml" && malayalamResponse ? malayalamResponse : latestResponse?.content ?? "No response yet.";
+  const responseSteps = useMemo(() => {
+    const content = visibleResponseContent.trim();
+    if (!content) {
+      return [];
+    }
 
+    const matches = Array.from(content.matchAll(/(?:^|\s)(\d+)\.\s+([\s\S]*?)(?=(?:\s+\d+\.\s)|$)/g));
+    if (matches.length === 0) {
+      return [];
+    }
+
+    return matches.map((match) => ({
+      step: match[1],
+      text: match[2].trim()
+    }));
+  }, [visibleResponseContent]);
+  const originalResponseSteps = useMemo(() => {
+    const content = latestResponse?.content?.trim() ?? "";
+    if (!content) {
+      return [];
+    }
+
+    const matches = Array.from(content.matchAll(/(?:^|\s)(\d+)\.\s+([\s\S]*?)(?=(?:\s+\d+\.\s)|$)/g));
+    if (matches.length === 0) {
+      return [];
+    }
+
+    return matches.map((match) => ({
+      step: match[1],
+      text: match[2].trim()
+    }));
+  }, [latestResponse?.content]);
+  const styledResponseSteps = useMemo(() => {
+    return responseSteps.map((item, index) => {
+      const normalized = item.text.replace(/\s+/g, " ").trim();
+      const sourceText =
+        originalResponseSteps[index]?.text?.replace(/\s+/g, " ").trim() || normalized;
+      const englishTitle = buildRecommendationHeading(sourceText);
+      const title =
+        displayLanguage === "ml"
+          ? translateRecommendationHeading(englishTitle)
+          : englishTitle;
+
+      return {
+        step: item.step,
+        title,
+        detail: normalized
+      };
+    });
+  }, [displayLanguage, originalResponseSteps, responseSteps]);
   async function sendFeedback(rating: "helpful" | "not_helpful") {
     if (!query || !latestResponse) {
       return;
@@ -316,10 +444,37 @@ export default function FarmerResponsePage() {
 
             {error ? <div className="mt-5 rounded-[20px] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</div> : null}
 
-            <div className="mt-6 rounded-[28px] border border-[#E5E7EB] bg-[#FCFCFB] p-5 md:p-6">
-              <p className="whitespace-pre-line text-[15px] leading-8 text-[#0A0A0A]">{visibleResponseContent}</p>
+            <div className="mt-6 rounded-[30px] border border-[#E8E0CF] bg-[linear-gradient(180deg,#FCF8F0_0%,#F7F1E7_100%)] p-5 md:p-7">
+              {styledResponseSteps.length > 0 ? (
+                <div className="grid gap-3">
+                  {styledResponseSteps.map((item, index) => (
+                    <div
+                      key={`${item.step}-${index}`}
+                      className="rounded-[24px] border border-[#E8E0CF] bg-white/88 px-4 py-4 shadow-[0_10px_24px_rgba(60,44,24,0.04)] backdrop-blur"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="inline-flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#25385B] text-sm font-bold text-white shadow-[0_8px_20px_rgba(37,56,91,0.22)]">
+                          {item.step}
+                        </div>
+                        <div className="min-w-0 pt-0.5">
+                          <div className="text-[16px] font-semibold leading-7 text-[#1E1A14]">
+                            {item.title}
+                          </div>
+                          {item.detail ? (
+                            <p className="mt-1 text-[14px] leading-7 text-[#7A6F60]">
+                              {removeRepeatedHeadingPrefix(item.detail, item.title)}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="whitespace-pre-line text-[15px] leading-8 text-[#1E1A14]">{visibleResponseContent}</p>
+              )}
               {displayLanguage === "ml" ? (
-                <div className="mt-4 rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3 text-xs font-medium text-[#6B7280]">
+                <div className="mt-4 rounded-2xl border border-[#E8E0CF] bg-white/90 px-4 py-3 text-xs font-medium text-[#6D6252]">
                   Malayalam translation view for easier farmer reading.
                 </div>
               ) : null}
